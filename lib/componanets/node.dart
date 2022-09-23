@@ -2,6 +2,9 @@ import 'package:builder/colors.dart';
 import 'package:builder/componanets/text.dart';
 import 'package:flutter/material.dart';
 import 'package:graphview/GraphView.dart';
+import 'package:provider/provider.dart';
+
+import '../systems/screen.dart';
 
 class NodeBlock {
   NodeBlock(
@@ -11,8 +14,9 @@ class NodeBlock {
       this.selected,
       this.deletNode,
       this.node,
+      this.dilog = false,
       this.openBlockEditor});
-
+  bool dilog;
   int a;
   Node? node;
   Widget blockMune;
@@ -22,16 +26,19 @@ class NodeBlock {
   bool? selected;
 
   Widget build(BuildContext context) {
+    Color scendryColor = context.watch<ScreenInfo>().scendryColor;
+
     return GestureDetector(
       onTap: () {
         openBlockEditor!(a, nodeName);
       },
       child: Container(
+        margin: dilog ? EdgeInsets.all(0) : EdgeInsets.all(25),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4),
           border: Border.all(
-              color: selected == true ? textFieldColor : Colors.blue, width: 3),
+              color: selected == true ? scendryColor : Colors.blue, width: 3),
           boxShadow: const [
             BoxShadow(color: Colors.blue, spreadRadius: 1),
           ],
@@ -46,6 +53,10 @@ class NodeBlock {
   }
 
   Widget box(String value, BuildContext context) {
+    Color scendryColor = context.watch<ScreenInfo>().scendryColor;
+    Color backGroundColor = context.watch<ScreenInfo>().backGroundColor;
+    Color firstColor = context.watch<ScreenInfo>().firstColor;
+    Color textColor = context.watch<ScreenInfo>().textColor;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -79,7 +90,7 @@ class NodeBlock {
           },
           child: Icon(
             Icons.add,
-            color: textFieldColor,
+            color: scendryColor,
             size: 20,
           ),
         )

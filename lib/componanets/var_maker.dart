@@ -4,7 +4,10 @@ import 'package:builder/colors.dart';
 import 'package:builder/componanets/text.dart';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:select_form_field/select_form_field.dart';
+
+import '../systems/screen.dart';
 
 // ignore: must_be_immutable
 class VarMaker extends StatefulWidget {
@@ -32,7 +35,7 @@ class VarMaker extends StatefulWidget {
 class _VarMakerState extends State<VarMaker> {
   final List<Map<String, dynamic>> _items = [
     {
-      'value': 'string',
+      'value': 'String',
     },
     {
       'value': 'int',
@@ -45,6 +48,9 @@ class _VarMakerState extends State<VarMaker> {
     },
     {
       'value': 'double',
+    },
+    {
+      'value': 'dynamic',
     },
   ];
   String varName = "";
@@ -66,32 +72,40 @@ class _VarMakerState extends State<VarMaker> {
 
   @override
   Widget build(BuildContext context) {
+    Color scendryColor = context.watch<ScreenInfo>().scendryColor;
+    Color backGroundColor = context.watch<ScreenInfo>().backGroundColor;
+    Color firstColor = context.watch<ScreenInfo>().firstColor;
     return SizedBox(
       height: 400,
       width: 300,
       child: Container(
         decoration: BoxDecoration(
-            color: barsColor,
+            color: firstColor,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(width: 1, color: textFieldColor)),
+            border: Border.all(width: 1, color: firstColor)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: TextForLessCode(value: "Create Var"),
+              child: TextForLessCode(
+                value: "Create Var",
+                color: scendryColor,
+              ),
             ),
             textField("Var name", (value) {
               varName = value;
               setState(() {});
-            }, widget.name != null ? widget.name : ""),
-            dropDown("Var type"),
-            checkedBox("List ?"),
+            }, widget.name != null ? widget.name : "", scendryColor,
+                backGroundColor),
+            dropDown("Var type", scendryColor, backGroundColor),
+            checkedBox("List ?", scendryColor, firstColor),
             textField("Value", (value) {
               varValue = value;
               setState(() {});
-            }, widget.value != null ? widget.value : ""),
+            }, widget.value != null ? widget.value : "", scendryColor,
+                backGroundColor),
             Visibility(
                 visible: error,
                 child: TextForLessCode(
@@ -101,7 +115,7 @@ class _VarMakerState extends State<VarMaker> {
                 )),
             Align(
               alignment: Alignment.centerRight,
-              child: button("Create"),
+              child: button("Create", scendryColor, backGroundColor),
             )
           ],
         ),
@@ -109,18 +123,18 @@ class _VarMakerState extends State<VarMaker> {
     );
   }
 
-  Widget textField(
-      String name, Function(dynamic value) onChange, String value) {
+  Widget textField(String name, Function(dynamic value) onChange, String value,
+      scendryColor, backGroundColor) {
     return SizedBox(
       height: 50,
       width: 220,
       child: Material(
-        color: barsColor,
+        color: scendryColor,
         type: MaterialType.card,
         child: TextFormField(
             initialValue: widget.edite == true ? value : "",
             onChanged: onChange,
-            cursorColor: textFieldColor,
+            cursorColor: scendryColor,
             style: const TextStyle(
               color: Colors.white,
               fontFamily: "Tajawal",
@@ -129,20 +143,20 @@ class _VarMakerState extends State<VarMaker> {
               fillColor: backGroundColor,
               filled: true,
               labelStyle: TextStyle(
-                color: textFieldColor,
+                color: scendryColor,
                 fontFamily: "Tajawal",
               ),
               labelText: name,
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5.0),
                 borderSide: BorderSide(
-                  color: textFieldColor,
+                  color: scendryColor,
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(3.0),
                 borderSide: BorderSide(
-                  color: barSpriterColor,
+                  color: scendryColor,
                   width: 1.0,
                 ),
               ),
@@ -151,27 +165,30 @@ class _VarMakerState extends State<VarMaker> {
     );
   }
 
-  Widget checkedBox(String name) {
+  Widget checkedBox(String name, scendryColor, backGroundColor) {
     return SizedBox(
       width: 400,
       child: Material(
-        color: barsColor,
+        color: backGroundColor,
         type: MaterialType.card,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            TextForLessCode(value: name),
+            TextForLessCode(
+              value: name,
+              color: scendryColor,
+            ),
             Checkbox(
               fillColor: MaterialStateProperty.resolveWith<Color>((states) {
                 if (states.contains(MaterialState.disabled)) {
-                  return textFieldColor;
+                  return scendryColor;
                 }
-                return textFieldColor;
+                return scendryColor;
               }),
               checkColor: backGroundColor,
               tristate: true,
-              activeColor: textFieldColor,
+              activeColor: scendryColor,
               onChanged: (e) {
                 isList = !isList;
                 setState(() {});
@@ -184,34 +201,32 @@ class _VarMakerState extends State<VarMaker> {
     );
   }
 
-  Widget dropDown(
-    String name,
-  ) {
+  Widget dropDown(String name, scendryColor, backGroundColor) {
     return SizedBox(
         height: 53,
         width: 220,
         child: Material(
-            color: barsColor,
+            color: backGroundColor,
             type: MaterialType.card,
             child: SelectFormField(
               decoration: InputDecoration(
                 fillColor: backGroundColor,
                 filled: true,
                 labelStyle: TextStyle(
-                  color: textFieldColor,
+                  color: scendryColor,
                   fontFamily: "Tajawal",
                 ),
                 labelText: name,
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5.0),
                   borderSide: BorderSide(
-                    color: textFieldColor,
+                    color: scendryColor,
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(3.0),
                   borderSide: BorderSide(
-                    color: barSpriterColor,
+                    color: scendryColor,
                     width: 1.0,
                   ),
                 ),
@@ -226,12 +241,12 @@ class _VarMakerState extends State<VarMaker> {
             )));
   }
 
-  Widget button(String name) {
+  Widget button(String name, scendryColor, backGroundColor) {
     return Padding(
       padding: const EdgeInsets.all(10),
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-            primary: barSpriterColor, backgroundColor: textFieldColor),
+            primary: scendryColor, backgroundColor: scendryColor),
         onPressed: () {
           if (varValue != null) {
             widget.createVar(varName, varType, isList, varValue);

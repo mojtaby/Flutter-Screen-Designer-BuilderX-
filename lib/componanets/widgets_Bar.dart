@@ -7,29 +7,28 @@ import 'package:builder/systems/canvas_controller.dart';
 
 import 'package:flutter/material.dart';
 
-class LeftBars extends StatefulWidget {
+class LeftBars extends StatelessWidget {
   LeftBars(
       {Key? key,
+      required this.back,
       required this.add,
       this.treenodewidget,
       this.selectedScreen,
       this.treeNodeVisibilety = true})
       : super(key: key);
-
   MoGCanvasItem? selectedScreen;
   Widget? treenodewidget;
   Function(String addName, String widget, String child) add;
   bool treeNodeVisibilety;
-
-  @override
-  State<LeftBars> createState() => _LeftBarsState();
-}
-
-class _LeftBarsState extends State<LeftBars> {
+  Function() back;
   @override
   Widget build(BuildContext context) {
     return Bar(
+      back: () {
+        back();
+      },
       child: SingleChildScrollView(
+        controller: ScrollController(),
         child: Column(
           children: [
             Wrap(
@@ -41,91 +40,108 @@ class _LeftBarsState extends State<LeftBars> {
                   icon: Icons.fit_screen,
                   widgetName: "Screen",
                   addAction: () {
-                    widget.add("screen", "", "");
-                    setState(() {});
+                    add("screen", "", "");
                   },
                 ),
                 AddActionBig(
                   icon: Icons.text_format,
                   widgetName: "Text",
                   addAction: () {
-                    widget.add("widget", "text", "text");
-                    setState(() {});
+                    add("widget", "text", "text");
                   },
                 ),
                 AddActionBig(
                   icon: Icons.add_box,
                   widgetName: "Container",
                   addAction: () {
-                    widget.add("widget", "container", "container");
-                    setState(() {});
+                    add("widget", "container", "container");
                   },
                 ),
                 AddActionBig(
                   icon: Icons.center_focus_strong,
                   widgetName: "Center",
                   addAction: () {
-                    widget.add("widget", "center", "center");
-                    setState(() {});
+                    add("widget", "center", "center");
+                  },
+                ),
+                AddActionBig(
+                  icon: Icons.padding_outlined,
+                  widgetName: "Padding",
+                  addAction: () {
+                    add("widget", "padding", "padding");
                   },
                 ),
                 AddActionBig(
                   icon: Icons.view_column_outlined,
                   widgetName: "Row",
                   addAction: () {
-                    widget.add("widget", "row", "row");
-                    setState(() {});
+                    add("widget", "row", "row");
                   },
                 ),
                 AddActionBig(
                   icon: Icons.table_rows_outlined,
                   widgetName: "Column",
                   addAction: () {
-                    widget.add("widget", "column", "column");
-                    setState(() {});
+                    add("widget", "column", "column");
                   },
                 ),
                 AddActionBig(
                   icon: Icons.add_box,
                   widgetName: "Stack",
                   addAction: () {
-                    widget.add("widget", "stack", "stack");
-                    setState(() {});
+                    add("widget", "stack", "stack");
                   },
                 ),
                 AddActionBig(
                   icon: Icons.image,
                   widgetName: "Image",
                   addAction: () {
-                    widget.add("widget", "image", "image");
-                    setState(() {});
+                    add("widget", "image", "image");
                   },
                 ),
                 AddActionBig(
                   icon: Icons.smart_button_outlined,
                   widgetName: "Button",
                   addAction: () {
-                    widget.add("widget", "button", "button");
-                    setState(() {});
+                    add("widget", "button", "button");
                   },
                 ),
                 AddActionBig(
                   icon: Icons.yard,
                   widgetName: "Icon",
                   addAction: () {
-                    widget.add("widget", "icon", "icon");
-                    setState(() {});
+                    add("widget", "icon", "icon");
+                  },
+                ),
+                /*  AddActionBig(
+                  icon: Icons.horizontal_rule_rounded,
+                  widgetName: "Divider",
+                  addAction: () {
+                    add("widget", "divider", "divider");
+                  },
+                ),*/
+                AddActionBig(
+                  icon: Icons.crop_outlined,
+                  widgetName: "SafeArea",
+                  addAction: () {
+                    add("widget", "safeArea", "safeArea");
                   },
                 ),
                 AddActionBig(
+                  icon: Icons.crop_free,
+                  widgetName: "SizedBox",
+                  addAction: () {
+                    add("widget", "sizedBox", "sizedBox");
+                  },
+                ),
+                /* AddActionBig(
                   icon: Icons.check_box,
                   widgetName: "Checkbox",
                   addAction: () {
-                    widget.add("widget", "checkbox", "checkbox");
-                    setState(() {});
+                    add("widget", "checkbox", "checkbox");
                   },
-                ),
-              ],
+              ), */
+              ], //
             ),
           ],
         ),

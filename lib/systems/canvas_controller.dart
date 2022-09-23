@@ -1,4 +1,6 @@
 import 'package:builder/systems/widget.dart';
+import 'package:device_frame/device_frame.dart';
+
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
@@ -16,18 +18,22 @@ class MoGCanvasItem with ChangeNotifier {
   bool appBar;
   bool floatingActionButton;
   bool drawer;
-  AppBar? appBarWidget;
-  FloatingActionButton? floatingActionButtonWidget;
-  Drawer? drawerWidget;
+  PreferredSize? appBarWidget;
+  PreferredSize? floatingActionButtonWidget;
+  PreferredSize? drawerWidget;
 
   double? borderWhenSelected;
   bool? canHaveChild;
   Function(WidgetMoG)? onChildrenInClicked;
   Function(WidgetMoG)? childClicked;
   List<WidgetMoG> items;
+  List<Widget> widgets = [];
   Color backGroundColor;
 
+  DeviceInfo? deviceName = Devices.ios.iPhone13;
+
   MoGCanvasItem({
+    this.deviceName,
     this.key = "",
     this.rootKey = "",
     this.items = const [],
@@ -57,9 +63,14 @@ class MoGCanvasItem with ChangeNotifier {
   var screenVariables = [];
   Map<dynamic, dynamic> widgetVar = {};
 
+  setWidget(List<WidgetMoG> widgetLsit, BuildContext context) {
+    widgets = widgetLsit.map((e) => e.build(context)).toList();
+  }
+
   varMaker(String varName, String varType, bool isList, dynamic value) {
     screenVariables.add(
         {"type": varType, "name": varName, "isList": isList, "value": value});
+
     notifyListeners();
   }
 
@@ -93,7 +104,7 @@ class MoGCanvasItem with ChangeNotifier {
     sizee = size;
   }
 
-// add child to selected widget
+  /// add child to selected widget
   addChild(WidgetMoG widget, String addType, CanvasController controller,
       BuildContext context) {
     if (widget.type == "row" ||
@@ -101,24 +112,28 @@ class MoGCanvasItem with ChangeNotifier {
         widget.type == "column") {
       widget.addToList(
           WidgetMoG(
+              widgetName: "WidgetName",
               childClick: (child) {
                 childClicked!(child);
               },
               controllerNav: controller,
-              keye: items.length + 1,
+              keye: Uuid().v1(),
               type: addType,
               canHaveChild: widget.canHaveChild,
               onChildrenClicked: (widgetMoG) {
                 onChildrenInClicked!(widgetMoG);
               }),
           context);
-    } else {
+    } else if (widget.type != "text" &&
+        widget.type != "image" &&
+        widget.type != "icon") {
       widget.child = WidgetMoG(
+          widgetName: "WidgetName",
           childClick: (child) {
             childClicked!(child);
           },
           controllerNav: controller,
-          keye: items.length + 1,
+          keye: Uuid().v1(),
           type: addType,
           canHaveChild: false,
           onChildrenClicked: (widgetMoG) {
@@ -127,22 +142,22 @@ class MoGCanvasItem with ChangeNotifier {
     }
   }
 
-// add child to selected screen
+  /// add child to selected screen
   addChildreToScreen(String type, CanvasController controller) {
-    Uuid id = const Uuid();
     // set any widget to can Have child except thes under
     if (type != "text" && type != "image" && type != "icon") {
-      adder(id, type, true, controller);
+      adder(type, true, controller);
     } else {
-      adder(id, type, false, controller);
+      adder(type, false, controller);
     }
   }
 
-// more about add child to selected screen, made for less code
-  adder(Uuid id, String type, bool canHaveChild, CanvasController controller) {
+  /// more about add widget to selected screen, made for less code
+  adder(String type, bool canHaveChild, CanvasController controller) {
     items.add(WidgetMoG(
+        widgetName: "WidgetName",
         controllerNav: controller,
-        keye: items.length,
+        keye: Uuid().v1().toString(),
         type: type,
         canHaveChild: canHaveChild,
         childClick: (child) {
@@ -167,11 +182,12 @@ class MoGCanvasItem with ChangeNotifier {
         widget.type == "column") {
       widget.addToList(
           WidgetMoG(
+              widgetName: "WidgetName",
               childClick: (child) {
                 childClicked!(child);
               },
               controllerNav: controller,
-              keye: items.length + 1,
+              keye: Uuid().v1(),
               type: type,
               canHaveChild: widget.canHaveChild,
               onChildrenClicked: (widgetMoG) {
@@ -180,11 +196,12 @@ class MoGCanvasItem with ChangeNotifier {
           context);
     } else {
       widget.child = WidgetMoG(
+          widgetName: "WidgetName",
           childClick: (child) {
             childClicked!(child);
           },
           controllerNav: controller,
-          keye: items.length + 1,
+          keye: Uuid().v1(),
           type: type,
           canHaveChild: widget.canHaveChild,
           onChildrenClicked: (widgetMoG) {
@@ -197,6 +214,8 @@ class MoGCanvasItem with ChangeNotifier {
     widget.widget[changeName] = changevalue;
   }
 
+  Map data = {};
+
   Map get asMap => {
         'key': key,
         'label': labele,
@@ -205,7 +224,7 @@ class MoGCanvasItem with ChangeNotifier {
         'drawer': drawer,
         'boder': borderWhenSelected,
         'flotingButton': floatingActionButton,
-        'items': items,
+        'items': items.map((e) => e.asMap),
         'size': {'width': size.width, 'height': size.height},
         'sizeProfile': sizeProfilee,
         'rotate': rotatee,
@@ -213,11 +232,13 @@ class MoGCanvasItem with ChangeNotifier {
       };
 }
 
-class CanvasController with ChangeNotifier {
-  final List<MoGCanvasItem> children;
-  int _screen = 0;
+class CanvasController {
+  late List<MoGCanvasItem> children;
 
+  double _top = 0;
+  double _left = 0;
   double _zoom = 1;
+
   final void Function([bool notify]) notifier;
 
   CanvasController({
@@ -226,13 +247,20 @@ class CanvasController with ChangeNotifier {
   });
 
   double get zoom => _zoom;
-  int get screen => _screen;
+  double get top => _top;
+  double get lefy => _left;
+
+  setChildern(List<MoGCanvasItem> childerne) {
+    children = childerne;
+  }
+
   setZoom(double zoom) {
     _zoom = zoom;
   }
 
-  setscreen(int screene) {
-    _screen = screene;
+  setOfess(double left, double top) {
+    _left = left;
+    _top = top;
   }
 
   List<MoGCanvasItem> restack(MoGCanvasItem item,

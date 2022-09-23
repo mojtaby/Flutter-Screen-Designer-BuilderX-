@@ -6,12 +6,14 @@ class TextForLessCode extends StatelessWidget {
   TextForLessCode(
       {Key? key,
       required this.value,
-      this.color = const Color.fromARGB(255, 232, 171, 66),
+      this.color = const Color.fromARGB(255, 0, 82, 234),
+      this.fontWeight = FontWeight.bold,
       this.size = 15})
       : super(key: key);
   String value;
   Color? color;
   double? size;
+  FontWeight fontWeight;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class TextForLessCode extends StatelessWidget {
         style: TextStyle(
             fontFamily: "Tajawal",
             fontSize: size,
-            fontWeight: FontWeight.bold,
+            fontWeight: fontWeight,
             color: color),
       ),
     );

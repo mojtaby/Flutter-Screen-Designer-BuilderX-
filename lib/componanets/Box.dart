@@ -2,6 +2,9 @@
 
 import 'package:builder/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../systems/screen.dart';
 
 class AddActionBig extends StatefulWidget {
   AddActionBig(
@@ -20,13 +23,17 @@ class AddActionBig extends StatefulWidget {
 class _AddActionBigState extends State<AddActionBig> {
   @override
   Widget build(BuildContext context) {
+    Color scendryColor = context.watch<ScreenInfo>().scendryColor;
+    Color backGroundColor = context.watch<ScreenInfo>().backGroundColor;
+
+    Color textColor = context.watch<ScreenInfo>().textColor;
     return GestureDetector(
       onTap: () {
         widget.addAction();
       },
       child: Container(
         decoration: BoxDecoration(
-            color: boxColor, borderRadius: BorderRadius.circular(10)),
+            color: scendryColor, borderRadius: BorderRadius.circular(10)),
         height: boxSize.height,
         width: boxSize.width,
         child: FittedBox(
@@ -36,7 +43,7 @@ class _AddActionBigState extends State<AddActionBig> {
             children: [
               Icon(
                 widget.icon,
-                color: boxIconColor,
+                color: textColor,
                 size: 30,
               ),
               const SizedBox(
@@ -44,10 +51,10 @@ class _AddActionBigState extends State<AddActionBig> {
               ),
               Text(widget.widgetName,
                   style: TextStyle(
-                      color: boxTextColor,
+                      color: textColor,
                       fontSize: 20,
                       fontFamily: "Tajawal",
-                      fontWeight: FontWeight.bold)),
+                      fontWeight: FontWeight.w500)),
             ],
           ),
         ),
